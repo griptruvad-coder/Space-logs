@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://griptruvad-coder.github.io/space-logs/sitemap.xml
