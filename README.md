@@ -12,7 +12,7 @@ By **Anurag Kumar** (Delhi, India).
 |---|---|---|
 | 2MASS J19195569-2609427 (TIC 168228752) | New W UMa-type eclipsing binary, P = 0.372687 d | Submitted to AAVSO VSX, 24 Nov 2026 (pending) |
 | 2MASS J19062908-2902093 (TIC 1159914) | New W UMa-type eclipsing binary, P = 0.313998 d | Not in VSX; submission queued |
-| TIC 111716343 (TYC 5819-17-1) | Long-period eccentric eclipsing binary, P = 21.7686 d, secondary at phase 0.41, Gaia RUWE 19 | Candidate; VSX check pending |
+| TIC 111716343 (TYC 5819-17-1) | Long-period eccentric eclipsing binary, P = 21.76852 d, secondary at phase 0.409, Gaia RUWE 19 | Not in VSX (checked 24 Nov 2026); submission queued |
 | TIC 377241703 (EPIC 218711655) | Recovered the K2 hot-Jupiter candidate EPIC 218711655.01 (Petigura et al. 2018) independently in TESS | Known candidate, not new |
 
 ## Hunts

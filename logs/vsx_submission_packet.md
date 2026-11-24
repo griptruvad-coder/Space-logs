@@ -37,3 +37,22 @@ Data source for both: NASA TESS 2-minute SPOC PDCSAP light curves (MAST). Magnit
 ---
 
 Discoverer credit: Anurag (independent analysis of public TESS data with a custom Python/BLS pipeline).
+
+---
+
+## 3. TIC 111716343
+
+Checked by position in VSX (60"): not listed (24 Nov 2026).
+
+| Field | Value |
+|---|---|
+| Primary name | TYC 5819-17-1 |
+| Other names | TIC 111716343; 2MASS J22541667-1244595; Gaia DR3 2603542040202228352; UCAC4 387-146291; WISE J225416.66-124459.3 |
+| RA, Dec (J2000) | 22 54 16.67 −12 44 59.5 (343.569453, −12.749827) |
+| Variability type | EA (detached eclipsing binary, eccentric orbit) |
+| Period | 21.76852 d (fit to three primary eclipses spanning 62 cycles; O−C < 0.5 min) |
+| Epoch of primary minimum | HJD 2460811.4668 (BJD_TDB 2460811.4676) |
+| Range (TESS band) | 8.46 – 8.80 T; secondary minimum 8.469 T |
+| Eclipse duration | ~0.77% of the period (~4.0 h) |
+| Data | TESS Sectors 42 (2021), 70 (2023), 92 (2025), 2-min SPOC PDCSAP |
+| Remarks | Secondary eclipse at phase 0.409 (eccentric orbit), seen in 4 events with the same phase. Gaia DR3 RUWE = 19.2 (possible tertiary or astrometric orbit signal). Not in Gaia DR3 vari_eclipsing_binary; not a TOI/CTOI. |
