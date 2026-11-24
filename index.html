@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I Searched 13,000 Stars for New Worlds. Here's What I Actually Found</title>
+<meta name="description" content="A student in Delhi searched 13,000 TESS stars with Python and AI: a planet candidate that turned out to be known, two new eclipsing binaries submitted to AAVSO VSX, and a 21.8-day eccentric binary hiding in plain sight.">
+<meta name="author" content="Anurag">
+<meta property="og:type" content="article">
+<meta property="og:title" content="I Searched 13,000 Stars for New Worlds. Here's What I Actually Found">
+<meta property="og:description" content="Hunting in public TESS and JWST data: the method, the mistakes, and what survived.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"I Searched 13,000 Stars for New Worlds. Here's What I Actually Found","author":{"@type":"Person","name":"Anurag"},"datePublished":"2026-11-24","keywords":"exoplanet, TESS, TIC 377241703, hot Jupiter, citizen science, Python, astronomy"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a field notebook kept at a telescope, curious and honest
+   IDEA: an observing log; each section is a log entry under a night sky
+   PICTURE: the folded light curve itself, the dip that started it all
+   COLOUR and TYPE: deep space navy, starlight white, one amber "signal" accent; Space Grotesk + Source Serif
+   LAYOUT: full-bleed starfield masthead, one reading column, funnel of numbers as bars */
+:root{color-scheme:dark;--bg:#070b1a;--deep:#0d1430;--ink:#e8ecfb;--dim:#9aa5cf;--line:#232c55;--amb:#ffb347}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.7 "Source Serif 4",Georgia,serif;overflow-x:clip}
+.sky{position:relative;padding:clamp(48px,8vw,110px) max(5vw,18px) clamp(36px,5vw,64px);
+ background:radial-gradient(1px 1px at 12% 22%,#fff,transparent),radial-gradient(1px 1px at 33% 68%,#cfd8ff,transparent),
+ radial-gradient(1.5px 1.5px at 58% 15%,#fff,transparent),radial-gradient(1px 1px at 72% 48%,#fff,transparent),
+ radial-gradient(1px 1px at 88% 30%,#ffe9c4,transparent),radial-gradient(1px 1px at 22% 85%,#fff,transparent),
+ radial-gradient(1.5px 1.5px at 92% 78%,#fff,transparent),radial-gradient(1px 1px at 46% 40%,#b9c6ff,transparent),
+ radial-gradient(1px 1px at 6% 55%,#fff,transparent),radial-gradient(1px 1px at 64% 88%,#fff,transparent),
+ radial-gradient(ellipse 70% 60% at 80% 10%,#1c2a6b 0,transparent 70%),linear-gradient(180deg,#0a1030,var(--bg))}
+.wrap{max-width:720px;margin:0 auto}
+h1,h2,.kick,.meta,.fn b,.card b{font-family:"Space Grotesk",system-ui,sans-serif}
+.kick{color:var(--amb);font-size:15px;font-weight:700;margin:0 0 14px}
+h1{font-size:clamp(32px,5.4vw,52px);line-height:1.05;margin:0 0 18px;text-wrap:balance;font-weight:700}
+.dek{font-size:clamp(18px,2.2vw,21px);color:#cdd5f5;margin:0 0 22px}
+.meta{font-size:14px;color:var(--dim)}
+figure{margin:0;background:var(--deep);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+figure img{display:block;width:100%;height:auto}
+figcaption{font-size:14px;color:var(--dim);padding:12px 16px;line-height:1.5}
+main{padding:0 max(5vw,18px) 40px}
+section{max-width:720px;margin:0 auto;padding-top:38px}
+h2{font-size:clamp(24px,3vw,30px);line-height:1.15;margin:0 0 12px;font-weight:700}
+.log{font-family:"Space Grotesk",sans-serif;font-size:13px;color:var(--amb);margin:0 0 6px}
+p{margin:0 0 16px}
+a{color:#9fb4ff}
+.fn{display:grid;gap:10px;margin:18px 0 8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;align-items:end}
+.row span{font-size:15px;color:#cdd5f5}
+.row b{font-size:20px;text-align:right;font-variant-numeric:tabular-nums}
+.bar{grid-column:1/-1;height:12px;border-radius:6px;background:linear-gradient(90deg,#3b4fd8,#6d7dff)}
+.row:last-child .bar{background:var(--amb)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}
+.card{background:var(--deep);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:15px;line-height:1.5}
+.card b{display:block;font-size:22px;color:#fff;margin-bottom:2px}
+.ok,.no{padding:14px 18px;border-radius:12px;margin:12px 0;font-size:16px}
+.ok{background:#0f2a24;border:1px solid #1d5a48}
+.no{background:#2a1616;border:1px solid #5a2626}
+ul{padding-left:1.2em;margin:0 0 16px}li{margin-bottom:8px}
+pre{overflow-x:auto;background:#0b1128;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:13.5px;line-height:1.5;color:#cfe0ff}
+footer{border-top:1px solid var(--line);color:var(--dim);font-size:14px;padding:26px max(5vw,18px) 44px}
+footer .wrap{max-width:720px}
+@media(prefers-reduced-motion:no-preference){.row:last-child .bar{animation:pulse 2.4s ease-in-out infinite}}
+@keyframes pulse{50%{box-shadow:0 0 14px var(--amb)}}
+</style>
+</head>
+<body>
+<header class="sky">
+ <div class="wrap">
+  <p class="kick">Space Logs · Log #1</p>
+  <h1>I searched 13,000 stars for new worlds. Here's what I actually found</h1>
+  <p class="dek">One planet candidate that turned out to be old news, two new binary stars now submitted to the world's variable-star index, and a strange 21.8-day eclipse that repeats with clockwork precision across four years.</p>
+  <p class="meta">By Anurag Kumar · 24 November 2026 · about 8 min read · <a href="https://github.com/griptruvad-coder/space-logs">code and data</a></p>
+ </div>
+</header>
+
+<main>
+ <section style="padding-top:0;margin-top:-6px">
+  <figure>
+   <img src="figures/new_binaries_phased.png" alt="Phased TESS light curves of two new W UMa-type eclipsing binaries, TIC 168228752 and TIC 1159914" width="900" height="640">
+   <figcaption>Two binary stars I found in NASA TESS data that weren't in the International Variable Star Index. Each one is a pair of stars orbiting so close they almost touch, circling once every 7.5–9 hours.</figcaption>
+  </figure>
+ </section>
+
+ <section>
+  <p class="log">Entry 1 · The idea</p>
+  <h2>Space is big, and most of its data is never looked at closely</h2>
+  <p>NASA's TESS satellite measures the brightness of tens of thousands of stars every two minutes, and all of it is public. Automated pipelines scan it for planets, but they are tuned for specific signals and human vetting teams are small. My plan: write my own pipeline, point it at one patch of sky (TESS Sector 92, observed in 2025), and look at everything strange, not just planets.</p>
+ </section>
+
+ <section>
+  <p class="log">Entry 2 · My first "discovery" (and my first mistake)</p>
+  <h2>I found a planet candidate. Someone else found it in 2018</h2>
+  <p>After testing my code on a known planet (WASP-18 b, recovered at the right 0.94-day period), I scanned 2,823 stars. One survived every check I knew: a 0.17% dip every 1.158 days on TIC 377241703, consistent with a grazing hot Jupiter.</p>
+  <figure>
+   <img src="figures/tic377241703_fold.png" alt="Folded TESS light curve of TIC 377241703 showing a shallow repeating dip" width="1100" height="572">
+   <figcaption>18 dips stacked. A real signal, but not a new one.</figcaption>
+  </figure>
+  <p style="margin-top:16px">I almost published it as new. Then I checked one more catalogue: the star is also called EPIC 218711655, and NASA's earlier K2 mission had already listed this exact signal as a planet candidate in 2018. My filter removed known TESS candidates but not K2 ones. The lesson, which I now apply to everything: <b>"not in the list I checked" is not the same as "new"</b>. The consolation is that my code independently recovered the same period nine years later from a different telescope.</p>
+ </section>
+
+ <section>
+  <p class="log">Entry 3 · Scaling up</p>
+  <h2>12,666 stars, zero new planets, two new binaries</h2>
+  <div class="fn" role="list">
+   <div class="row" role="listitem"><span>Stars scanned in the full sector</span><b>12,666</b><div class="bar" style="width:100%"></div></div>
+   <div class="row" role="listitem"><span>Planet-like signals</span><b>10</b><div class="bar" style="width:6%"></div></div>
+   <div class="row" role="listitem"><span>Real planets after checking for secondary eclipses</span><b>0</b><div class="bar" style="width:0.5%"></div></div>
+   <div class="row" role="listitem"><span>Binaries not in VSX, confirmed by Gaia velocities</span><b>2</b><div class="bar" style="width:2.5%"></div></div>
+  </div>
+  <p>Every planet-like signal had a second, smaller dip halfway through its cycle: one star eclipsing another. For two of them, the Gaia space telescope had measured the star's velocity swinging by 106 km/s and 48 km/s, which only a stellar companion can do. Neither star appeared in AAVSO's International Variable Star Index (VSX), so I submitted the first one under my name on 24 November 2026; the second is queued. Both are pending review by VSX moderators.</p>
+ </section>
+
+ <section>
+  <p class="log">Entry 4 · Letting an AI look for "weird"</p>
+  <h2>An anomaly detector found a binary with a 21.8-day secret</h2>
+  <p>Instead of searching for one kind of signal, I computed 15 shape features for each of 12,840 light curves (how deep the dips are, how irregular, how often the star flares, how periodic it is) and asked an Isolation Forest model which stars look least like the rest. Most of its picks were ordinary binaries and pulsating stars, plus two asteroids caught drifting past their stars. One stood out.</p>
+  <figure>
+   <img src="figures/tic111716343_eclipses.png" alt="Three TESS sectors of TIC 111716343, each showing a single 27 percent deep eclipse and small secondary dips" width="900" height="500">
+   <figcaption>TIC 111716343 in 2021, 2023 and 2025: one deep eclipse per month of data, so automated searches that need several dips per sector skip it.</figcaption>
+  </figure>
+  <div class="ok" style="margin-top:16px"><b>Clockwork across four years.</b> Three eclipses, years apart, fit a single period of 21.7686 days with no measurable timing error.</div>
+  <div class="ok"><b>An egg-shaped orbit.</b> The small secondary eclipse arrives at 41% of the orbit, not 50%. The two stars swing around each other on an eccentric path.</div>
+  <div class="ok"><b>A wobble Gaia noticed.</b> Gaia's astrometric fit quality (RUWE) is 19, versus about 1 for a well-behaved single star, which hints at extra motion and possibly a third star.</div>
+  <div class="no"><b>Not yet checked against VSX.</b> It's a bright star (magnitude ~8.5), so someone may have catalogued it already. That check comes before any claim.</div>
+ </section>
+
+ <section>
+  <p class="log">Entry 5 · JWST, briefly</p>
+  <h2>Hunting asteroids in JWST images: so far, only ghosts</h2>
+  <p>I also searched 49 individual JWST mid-infrared exposures near the plane of the Solar System for anything that moves between frames. Every candidate turned out to be a detector artifact: a glowing row of pixels, or glow at the edge of the coronagraph mask. The next version will mask those regions and cover far more fields.</p>
+ </section>
+
+ <section>
+  <p class="log">Entry 6 · What's next</p>
+  <h2>Next steps</h2>
+  <ul>
+   <li>Follow the VSX submissions through review and submit the second binary.</li>
+   <li>Check TIC 111716343 against VSX, then re-examine it with Gaia DR4 (released 2 December 2026), which will publish every individual position measurement.</li>
+   <li>Run the anomaly hunt on a new TESS sector every week and log the results here.</li>
+  </ul>
+  <p>If you're an astronomer and spot a flaw in any of this, please tell me. That's the fastest way I'll get better.</p>
+ </section>
+</main>
+
+<footer><div class="wrap">Data: NASA TESS (MAST, SPOC light curves and validation reports), ESA Gaia DR3, NASA Exoplanet Archive, ExoFOP, JWST (MAST), AAVSO VSX. Candidates described here are unconfirmed unless stated. Code: github.com/griptruvad-coder/space-logs</div></footer>
+</body>
+</html>
