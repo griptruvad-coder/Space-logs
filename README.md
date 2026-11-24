@@ -2,7 +2,7 @@
 
 Hunting for things nobody has noticed yet in public space-telescope data, using Python and AI. Every hunt, false alarm and finding is logged here.
 
-**Blog:** https://griptruvad-coder.github.io/space-logs/
+**Blog:** https://griptruvad-coder.github.io/Space-logs/
 
 By **Anurag Kumar** (Delhi, India).
 
